@@ -1,8 +1,9 @@
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="http://code.highcharts.com/highcharts.js"></script>
   <script src="http://code.highcharts.com/modules/exporting.js"></script>
   <script src="/socket.io/socket.io.js"></script>
-  <div id='container' style="height:100%;width:100%;"></div>
+  <div id='container' style="height:50%;width:50%;"></div>
+  
   <script type="text/javascript">
     $(document).ready(function () {
       var socket = io();
@@ -25,7 +26,7 @@
 
                   },
                   title: {
-                    text: 'CPU Utilization In One Minute Interval'
+                    text: 'Inking Mean Response Time'
                   },
                   xAxis: {
                     type: 'datetime',
@@ -39,7 +40,7 @@
                   },
                   yAxis: {
                     title: {
-                      text: 'Utilization',
+                      text: 'Time',
                       style: {
                         fontWeight: 'bold'
                       }
@@ -63,7 +64,7 @@
                     enabled: true
                   },
                   series: [{
-                    name: 'CPU Utilization',
+                    name: 'Response Time',
                     data: (function () {
                         // generate an array of random data
                         var data = [],
@@ -80,8 +81,8 @@
                       }())
                   }]
                 });
-      socket.on('synmon-message', function(data){
-        if(data.param === "CpuUsage"){
+      socket.on('inking-message', function(data){
+        if(data.param === "InkingModuleApiResponseTime"){
           chart.series[0].addPoint([(new Date()).getTime(), parseInt(data.value)], true, true);
           chart.redraw();
         } else{

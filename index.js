@@ -6,15 +6,15 @@ var Consumer = kafka.Consumer;
 var Offset = kafka.Offset;
 var Client = kafka.Client;
 var topic = 'synmon';
-var client = new Client('52.187.27.53:2181', "kafka-realtime-dashboard");
+var client = new Client('kafka-pry-0.southeastasia.cloudapp.azure.com:2181', "kafka-realtime-dashboard");
 var payloads = [{ topic: topic }];
 var consumer = new Consumer(
 	client,
 	[
-	{ topic: 'synmon'}, { topic: 'inking' }
+	{ topic: 'synmon'}
 	],
 	{
-		autoCommit: false
+		autoCommit: true
 	}
 	);
 var offset = new Offset(client);
@@ -22,6 +22,10 @@ var port = 3001;
 
 app.get('/', function(req, res){
 	res.sendfile('index.html');
+});
+
+app.get('/inking', function(req, res){
+	res.sendfile('inking.html');
 });
 
 io = io.on('connection', function(socket){
@@ -32,12 +36,17 @@ io = io.on('connection', function(socket){
 });
 
 consumer = consumer.on('message', function(message) {
-	console.log(message.value);
-	console.log(message.topic);
-	if(message.topic === "synmon"){
-		io.emit("synmon-message", message.value);
+ var str = JSON.stringify(message.value)
+        var data = JSON.parse(JSON.parse(str))
+console.log(data)
+console.log(data.param)
+console.log(typeof(data))
+//var data = JSON.parse(str)
+//var data = {}
+if(data.param === "CpuUsage"){
+		io.emit("synmon-message", data);
 	} else{
-		io.emit("inking-message", message.value);
+		io.emit("inking-message", data);
 	}
 });
 
